@@ -132,6 +132,7 @@ unsigned int WidgetHelper::backup()
     conf.setValue("chatFloating", m_dockChat->isFloating());
     conf.setValue("chatGeometry", m_dockChat->saveGeometry());
     conf.setValue("infoFloating", m_dockInfo->isFloating());
+    conf.setValue("infoHidden", m_dockInfo->isHidden());
     conf.setValue("infoGeometry", m_dockInfo->saveGeometry());
 
     m_loaded = false;
@@ -165,6 +166,8 @@ unsigned int WidgetHelper::restore()
 
         m_dockChat->show();
         m_dockInfo->show();
+
+        m_dockInfo->setHidden(conf.value("infoHidden", m_dockInfo->isHidden()).toBool());
     }
 
     m_loaded = true;
@@ -185,13 +188,15 @@ unsigned int WidgetHelper::start()
 
     m_dockInfo->setWidget(m_stacked);
     m_dockInfo->setAllowedAreas(Qt::AllDockWidgetAreas);
-    m_dockInfo->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+    m_dockInfo->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetClosable);
     m_dockInfo->setObjectName("infoFrameDock");
+    m_dockInfo->setTitleBarWidget(new QWidget());
 
     m_dockChat->setWidget(m_chatArea);
     m_dockChat->setAllowedAreas(Qt::AllDockWidgetAreas);
-    m_dockChat->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+    m_dockChat->setFeatures(QDockWidget::DockWidgetMovable);
     m_dockChat->setObjectName("chatAreaDock");
+    m_dockChat->setTitleBarWidget(new QWidget());
 
     m_mainWindow->setDockOptions(QMainWindow::AnimatedDocks | QMainWindow::AllowNestedDocks | QMainWindow::AllowTabbedDocks);
     m_mainWindow->addDockWidget(Qt::RightDockWidgetArea, m_dockInfo);
